@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "78417678101",
+    "project_id": "brickmortar-4ab79",
+    "storage_bucket": "brickmortar-4ab79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78417678101:android:23d6333f3a3981c6d5e31c",
+        "android_client_info": {
+          "package_name": "com.example.brickmortar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaMRvI05RtudxsmhNp7QK5OeUMoxmW98c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
