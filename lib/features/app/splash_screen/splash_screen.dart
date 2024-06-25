@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
+import '../../user_auth/presentation/pages/login_page.dart';
 
-class SplashScreen extends StatelessWidget {
+
+class SplashScreen extends StatefulWidget {
+  final Widget? child;
+  const SplashScreen({super.key, this.child});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+
+@override
+  void initState() {
+    Future.delayed(
+      Duration(seconds: 3),(){
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => widget.child!), (route) => false);
+    }
+    );
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,9 +64,9 @@ class SplashScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.white,
-                  onPrimary: Color(0xFF0066FF),
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Color(0xFF0066FF),
+                  padding: EdgeInsets.symmetric(horizontal: 86, vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -56,6 +77,7 @@ class SplashScreen extends StatelessWidget {
                     Text(
                       "Let's go",
                       style: TextStyle(fontSize: 16),
+                      
                     ),
                     Icon(Icons.arrow_forward),
                   ],

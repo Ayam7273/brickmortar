@@ -1,50 +1,34 @@
-import 'package:flutter/material.dart';
+import 'package:brickmortar/features/user_auth/presentation/pages/sign_up_page.dart';
+import 'package:brickmortar/features/user_auth/presentation/widgets/form_container_widget.dart';
+import 'package:brickmortar/global/common/toast.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'sign_up_page.dart';
-import 'forgot_password_page.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../firebase_auth_implementation/firebase_auth_services.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _auth = FirebaseAuth.instance;
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  bool _isSigning = false;
+  final FirebaseAuthService _auth = FirebaseAuthService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
-  Future<void> _login() async {
-    try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      // Navigate to home screen
-    } catch (e) {
-      print(e);
-      // Handle error
-    }
-  }
-
-  Future<void> _loginWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-      // Navigate to home screen
-    } catch (e) {
-      print(e);
-      // Handle error
-    }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,9 +53,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 32),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.person, color: Colors.grey),
-                    hintText: 'Full Name',
+                    prefixIcon: Icon(Icons.mail, color: Colors.grey),
+                    hintText: 'Email',
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
@@ -83,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 16),
                 TextField(
                   obscureText: true,
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.lock, color: Colors.grey),
                     hintText: 'Password',
@@ -95,27 +81,16 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
-                    );
-                  },
-                  child: Text(
-                    'Forget password?',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                
                 SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () {
-                    // Handle login logic here
+                    _signIn();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    onPrimary: Color(0xFF0066FF),
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    backgroundColor: Colors.white,
+                    foregroundColor: Color(0xFF0066FF),
+                    padding: EdgeInsets.symmetric(horizontal: 86, vertical: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -133,16 +108,16 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 16),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // Handle Google sign-in logic here
+                   _signInWithGoogle();
                   },
-                  icon: Image.asset('assets/google.png', height: 24, width: 24), 
+                  icon: Image.asset('assets/img/google.png', height: 24, width: 24), 
                   label: Text(
                     'Continue with Google',
                     style: TextStyle(color: Color(0xFF0066FF)),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       side: BorderSide(color: Colors.white),
@@ -179,6 +154,59 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+
+
+
+  void _signIn() async {
+    setState(() {
+      _isSigning = true;
+    });
+
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    User? user = await _auth.signInWithEmailAndPassword(email, password);
+
+    setState(() {
+      _isSigning = false;
+    });
+
+    if (user != null) {
+      showToast(message: "User is successfully signed in");
+      Navigator.pushNamed(context, "/home");
+    } else {
+      showToast(message: "some error occured");
+    }
+  }
+
+
+  _signInWithGoogle()async{
+
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+    try {
+
+      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+
+      if(googleSignInAccount != null ){
+        final GoogleSignInAuthentication googleSignInAuthentication = await
+        googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken,
+        );
+
+        await _firebaseAuth.signInWithCredential(credential);
+        Navigator.pushNamed(context, "/home");
+      }
+
+    }catch(e) {
+showToast(message: "some error occured $e");
+    }
+
+
+  }
+
+
 }
-
-
