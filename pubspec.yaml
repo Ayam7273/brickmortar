@@ -53,6 +53,8 @@ dependencies:
   fluttertoast: ^8.2.2
   font_awesome_flutter: ^10.6.0
   google_sign_in: ^6.1.5
+  flutter_rating_bar: ^4.0.1
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +82,36 @@ flutter:
   assets:
     - assets/img/logo.png
     - assets/img/google.png
+    - assets/img/1.jpg
+    - assets/img/2.jpg
+    - assets/img/3.jpg
+    - assets/img/4.jpg
+    - assets/img/5.jpg
+    - assets/img/6.jpg
+    - assets/img/7.jpg
+    - assets/img/10.jpg
+    - assets/img/11.jpg
+    - assets/img/12.jpg
+    - assets/img/b1.jpg
+    - assets/img/b2.jpg
+    - assets/img/b3.jpg
+    - assets/img/b4.jpg
+    - assets/img/b5.jpg
+    - assets/img/b6.jpg
+    - assets/img/g1.png
+    - assets/img/h1.jpg
+    - assets/img/h2.jpg
+    - assets/img/h3.jpg
+    - assets/img/ob1.png
+    - assets/img/ob2.png
+    - assets/img/ob3.png
+    - assets/img/p1.jpg
+    - assets/img/p2.jpg
+    - assets/img/p3.jpg
+    - assets/img/u1.png
+
+
+    
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
